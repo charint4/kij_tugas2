@@ -13,7 +13,7 @@ def read_msg(clients, sock_cli, addr_cli, username_cli, userlist):
         if msg[0] not in userlist:
             send_msg(sock_cli, msg[0] + " username not found")
         else:
-            sendmsg = "<{}>: {}".format(username_cli, msg[1])
+            sendmsg = "({}): {}".format(username_cli, msg[1])
             print(sendmsg)
             send_msg(clients[msg[0]][0], sendmsg)
     sock_cli.close()
