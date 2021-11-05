@@ -11,7 +11,7 @@ def read_msg(clients, sock_cli, addr_cli, username_cli, userlist):
         if msg[0] == username_cli:
             continue
         if msg[0] not in userlist:
-            send_msg(sock_cli, msg[0] + " tidak ditemukan")
+            send_msg(sock_cli, msg[0] + " username not found")
         else:
             sendmsg = "<{}>: {}".format(username_cli, msg[1])
             print(sendmsg)
