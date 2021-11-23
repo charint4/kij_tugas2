@@ -41,7 +41,6 @@ key = key_gen.randStr(N=8)
 
 e, d, N = rsa.genereateKeys(32)
 keypath = os.getcwd() + '/key/'
-print(keypath)
 key_folder = os.listdir(keypath)
 f = open(keypath+sys.argv[1]+'.txt', 'w+')
 f.write(str(e)+" "+str(N))
