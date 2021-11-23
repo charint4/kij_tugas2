@@ -5,6 +5,7 @@ import threading
 def read_msg(clients, sock_cli, addr_cli, username_cli, userlist):
     while True:
         data = sock_cli.recv(65535)
+        print(data)
         if len(data) == 0:
             break
         msg = data.decode("utf-8").split("|")
@@ -14,7 +15,8 @@ def read_msg(clients, sock_cli, addr_cli, username_cli, userlist):
             send_msg(sock_cli, msg[0] + " username not found")
         else:
             sendmsg = "({}): {}".format(username_cli, msg[1])
-            print(sendmsg)
+            # print(sendmsg)
+            sendmsg = "{},{},{}".format(username_cli, msg[1], msg[2])
             send_msg(clients[msg[0]][0], sendmsg)
     sock_cli.close()
     print("Connection closed", addr_cli)

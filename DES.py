@@ -1,3 +1,4 @@
+import rsa
 def hex2bin(s):
     mp = {'0': "0000",
           '1': "0001",
@@ -194,9 +195,8 @@ final_perm = [40, 8, 48, 16, 56, 24, 64, 32,
               33, 1, 41, 9, 49, 17, 57, 25]
 
 
-def encrypt(pt, rkb, rk):
+def encrypt(pt, rkb):
     pt = permute(pt, initial_perm, 64)
-    # print("After initial permutation", bin2hex(pt))
 
     left = pt[0:32]
     right = pt[32:64]
@@ -219,7 +219,6 @@ def encrypt(pt, rkb, rk):
 
         if i != 15:
             left, right = right, left
-        # print("Round ", i + 1, " ", bin2hex(left), " ", bin2hex(right), " ", rk[i])
 
     combine = left + right
 
@@ -257,10 +256,9 @@ key_comp = [14, 17, 11, 24, 1, 5,
             46, 42, 50, 36, 29, 32]
 
 rkb = []
-rk = []
 
 
-def init_keys(key, rkb, rk):
+def init_keys(key, rkb):
     # key = hex2bin(key)
     key = ascii2bin(key)
     key = permute(key, keyp, 56)
@@ -275,20 +273,24 @@ def init_keys(key, rkb, rk):
         round_key = permute(combine_str, key_comp, 48)
 
         rkb.append(round_key)
-        rk.append(bin2hex(round_key))
 
 
 if __name__ == '__main__':
-    init_keys(key, rkb, rk)
+    init_keys(key, rkb)
+    e, d, N = rsa.genereateKeys(32)
     print("Encryption")
     # pt = hex2bin(pt)
     pt = ascii2bin(pt)
-    cipher_text = encrypt(pt, rkb, rk)
+    cipher_text = encrypt(pt, rkb)
     print("Cipher Text : ", bin2hex(cipher_text))
 
+    rsa_enc = rsa.encrypt(e, N , ' '.join(map(str, rkb)))
+    print(type(rsa_enc))
+    rsa_dec = rsa.decrypt(d, N , rsa_enc)
+    print(rsa_dec.split() == rkb)
+    
     print("Decryption")
-    rkb_rev = rkb[::-1]
-    rk_rev = rk[::-1]
-    text = encrypt(cipher_text, rkb_rev, rk_rev)
+    rkb_rev = rsa_dec.split()[::-1]
+    text = encrypt(cipher_text, rkb_rev)
     # print("Plain Text : ", bin2hex(text))
     print("Plain Text : ", bin2ascii(text))
