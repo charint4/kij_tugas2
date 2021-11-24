@@ -40,7 +40,7 @@ thread_cli.start()
 key = key_gen.randStr(N=8) #des key
 
 
-e, d, N = rsa.genereateKeys(32) # e N buat encrypt / d N buat decrypt
+e, d, N = rsa.genereateKeys(32)
 keypath = os.getcwd() + '\\key\\'
 key_folder = os.listdir(keypath)
 f = open(keypath+sys.argv[1]+'.txt', 'w+')
