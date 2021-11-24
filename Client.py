@@ -23,6 +23,7 @@ def read_msg(sock):
             print("After decrypted:")
             msg = DES.encrypt(msg, key_rev)
             print("(" + user + ")" + " : " + DES.bin2ascii(msg))
+            print("\nInput username destination : ")
         else:
             print("\n"+data)
             
@@ -36,10 +37,10 @@ sock.send(bytes(sys.argv[1], "utf-8"))
 thread_cli = threading.Thread(target=read_msg, args=(sock,))
 thread_cli.start()
 
-key = key_gen.randStr(N=8)
+key = key_gen.randStr(N=8) #des key
 
 
-e, d, N = rsa.genereateKeys(32)
+e, d, N = rsa.genereateKeys(32) # e N buat encrypt / d N buat decrypt
 keypath = os.getcwd() + '\\key\\'
 key_folder = os.listdir(keypath)
 f = open(keypath+sys.argv[1]+'.txt', 'w+')
@@ -53,15 +54,18 @@ DES.init_keys(key, rkb)
 
 while True:
     dest = input("Input username destination : ")
-    f = open(keypath+dest+'.txt', 'r')
-    recv_e, recv_N= f.read().split()
-    enc_key = rsa.encrypt(int(recv_e), int(recv_N), ' '.join(map(str, rkb)))
-    msg = input("Input message :")
-    if len(msg) != 8:
-        print("Message must be 8 characters long")
-    else:
-        msg = DES.ascii2bin(msg)
-        cipher_text = DES.encrypt(msg, rkb)
-        print("Encrypted message: " + DES.bin2hex(cipher_text))
-        sock.send(bytes("{}|{}|{}".format(dest, cipher_text, enc_key), "utf-8"))
-    time.sleep(0.5)
+    if dest+'.txt' not in key_folder:
+        print(dest + ' is not on client list')
+    else :
+        f = open(keypath+dest+'.txt', 'r')
+        recv_e, recv_N= f.read().split()
+        enc_key = rsa.encrypt(int(recv_e), int(recv_N), ' '.join(map(str, rkb)))
+        msg = input("Input message :")
+        if len(msg) != 8:
+            print("Message must be 8 characters long")
+        else:
+            msg = DES.ascii2bin(msg)
+            cipher_text = DES.encrypt(msg, rkb)
+            print("Encrypted message: " + DES.bin2hex(cipher_text))
+            sock.send(bytes("{}|{}|{}".format(dest, cipher_text, enc_key), "utf-8"))
+        time.sleep(0.5)
